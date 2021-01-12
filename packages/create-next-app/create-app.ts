@@ -125,6 +125,13 @@ export async function createApp({
   await makeDir(root)
   process.chdir(root)
 
+  const packageJson = {
+    name: appName,
+    version: '0.1.0',
+    private: true,
+    scripts: { dev: 'next dev', build: 'next build', start: 'next start' },
+  }
+
   if (example) {
     try {
       if (repoInfo) {
@@ -167,12 +174,6 @@ export async function createApp({
     await install(root, null, { useYarn, isOnline })
     console.log()
   } else {
-    const packageJson = {
-      name: appName,
-      version: '0.1.0',
-      private: true,
-      scripts: { dev: 'next dev', build: 'next build', start: 'next start' },
-    }
     fs.writeFileSync(
       path.join(root, 'package.json'),
       JSON.stringify(packageJson, null, 2) + os.EOL
@@ -185,7 +186,13 @@ export async function createApp({
     )
     console.log()
 
-    await install(root, ['react', 'react-dom', 'next'], { useYarn, isOnline })
+    const dependencies = ['react', 'react-dom', 'next']
+    if (template) {
+      if (template === 'diamond') {
+        dependencies.push('eslint')
+      }
+    }
+    await install(root, dependencies, { useYarn, isOnline })
     console.log()
 
     await cpy('**', root, {
