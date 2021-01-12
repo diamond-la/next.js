@@ -26,11 +26,13 @@ export class DownloadError extends Error {}
 export async function createApp({
   appPath,
   useNpm,
+  template,
   example,
   examplePath,
 }: {
   appPath: string
   useNpm: boolean
+  template?: string
   example?: string
   examplePath?: string
 }): Promise<void> {
@@ -188,7 +190,7 @@ export async function createApp({
 
     await cpy('**', root, {
       parents: true,
-      cwd: path.join(__dirname, 'templates', 'default'),
+      cwd: path.join(__dirname, 'templates', template || 'default'),
       rename: (name) => {
         switch (name) {
           case 'gitignore': {

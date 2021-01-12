@@ -20,6 +20,8 @@ const program = new Commander.Command(packageJson.name)
     projectPath = name
   })
   .option('--use-npm')
+  .option('--example')
+  .option('-t --template <template>', 'project template')
   .option(
     '-e, --example [name]|[github-url]',
     `
@@ -113,6 +115,7 @@ async function run(): Promise<void> {
       useNpm: !!program.useNpm,
       example: example && example !== 'default' ? example : undefined,
       examplePath: program.examplePath,
+      template: program.template,
     })
   } catch (reason) {
     if (!(reason instanceof DownloadError)) {
@@ -131,7 +134,11 @@ async function run(): Promise<void> {
       throw reason
     }
 
-    await createApp({ appPath: resolvedProjectPath, useNpm: !!program.useNpm })
+    await createApp({
+      appPath: resolvedProjectPath,
+      useNpm: !!program.useNpm,
+      template: program.template,
+    })
   }
 }
 
